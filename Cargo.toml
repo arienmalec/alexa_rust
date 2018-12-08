@@ -2,6 +2,10 @@
 name = "alexa"
 version = "0.1.0"
 authors = ["Arien Malec <arien.malec@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/arienmalec/alexa_rust"
+repository = "https://github.com/arienmalec/alexa_rust"
 
 [dependencies]
 serde = "^1"
