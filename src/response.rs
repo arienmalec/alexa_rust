@@ -127,6 +127,7 @@ impl Speech {
     }
 }
 
+#[allow(dead_code)]
 enum CardType {
     Simple,
     Standard,
