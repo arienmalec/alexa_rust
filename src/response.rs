@@ -18,7 +18,19 @@ impl Response {
                 should_end_session: true
             }
         }
+    }
 
+    pub fn end() -> Response {
+        Response {
+            version: String::from("1.0"),
+            session_attributes: None,
+            body: ResBody {
+                output_speech: None,
+                card: None,
+                reprompt: None,
+                should_end_session: true
+            }
+        }
     }
 }
 
