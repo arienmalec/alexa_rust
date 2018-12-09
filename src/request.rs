@@ -94,6 +94,16 @@ pub struct Intent {
     slots: Option<HashMap<String,Slot>>
 }
 
+impl Intent {
+    fn get_slot<'a>(&'a self, name: &str) -> Option<&'a Slot> {
+        if let Some(ref h) = self.slots {
+             h.get(name)
+        } else {
+            return None
+        }
+    }
+}
+
 
 #[derive(Serialize,Deserialize,Debug,Clone)]
 pub struct Slot {
@@ -231,6 +241,18 @@ impl Request {
             IntentType::None
         }
     }
+
+    pub fn slot_value(&self, slot: &str) -> Option<String> {
+        if let Some(ref i) = self.body.intent {
+            if let Some(ref s) = i.get_slot(slot) {
+                Some(s.value.clone())
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
 }
 
 #[cfg(test)]
@@ -274,6 +296,15 @@ mod tests {
             Err(e) => panic!(e.to_string())
         }
  
+    }
+
+    #[test]
+    fn test_slot() {
+        let p: Result<Request,serde_json::Error> = self::serde_json::from_str(req_with_slots());
+        match p {
+            Ok(req) => assert_eq!(req.slot_value("name"), Some(String::from("bob"))),
+            Err(e) => panic!(e.to_string())
+        }
     }
 
 
@@ -333,6 +364,81 @@ mod tests {
 		"intent": {
 			"name": "hello",
 			"confirmationStatus": "NONE"
+		}
+	}
+}"#
+    }
+
+    fn req_with_slots() -> &'static str {
+        r#"{
+	"version": "1.0",
+	"session": {
+		"new": true,
+		"sessionId": "amzn1.echo-api.session.blahblahblah",
+		"application": {
+			"applicationId": "amzn1.ask.skill.testappliction"
+		},
+		"user": {
+			"userId": "amzn1.ask.account.longstringuseridentifier"
+		}
+	},
+	"context": {
+		"Display": {},
+		"System": {
+			"application": {
+				"applicationId": "amzn1.ask.skill.tehappz"
+			},
+			"user": {
+				"userId": "amzn1.ask.account.longstringuseridentifier"
+			},
+			"device": {
+				"deviceId": "amzn1.ask.device.testdevice",
+				"supportedInterfaces": {
+					"Display": {
+						"templateVersion": "1.0",
+						"markupVersion": "1.0"
+					}
+				}
+			},
+			"apiEndpoint": "https://api.amazonalexa.com",
+			"apiAccessToken": "teh.token.with-long-string-more-more-more-more"
+		},
+		"Viewport": {
+			"experiences": [
+				{
+					"arcMinuteWidth": 246,
+					"arcMinuteHeight": 144,
+					"canRotate": false,
+					"canResize": false
+				}
+			],
+			"shape": "RECTANGLE",
+			"pixelWidth": 1024,
+			"pixelHeight": 600,
+			"dpi": 160,
+			"currentPixelWidth": 1024,
+			"currentPixelHeight": 600,
+			"touch": [
+				"SINGLE"
+			]
+		}
+	},
+	"request": {
+		"type": "IntentRequest",
+		"requestId": "amzn1.echo-api.request.id",
+		"timestamp": "2018-12-08T05:37:32Z",
+		"locale": "en-US",
+		"intent": {
+			"name": "hello",
+			"confirmationStatus": "NONE",
+			"slots": {
+				"name": {
+					"name": "name",
+					"value": "bob",
+					"confirmationStatus": "NONE",
+					"source": "USER"
+				}
+			}
 		}
 	}
 }"#
