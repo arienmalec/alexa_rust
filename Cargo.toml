@@ -2,6 +2,7 @@
 name = "alexa"
 version = "0.1.0"
 authors = ["Arien Malec <arien.malec@gmail.com>"]
+description = "Implements Request/Response for Amazon Alexa skills"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/arienmalec/alexa_rust"

@@ -1,8 +1,8 @@
-# Rust Request/Response for Alexa Skills
+# Rust Request/Response for Amazon Alexa Skills
 
 ## About
 
-Implements Alexa Skill request/response structs following the [Alexa skill specifications](https://developer.amazon.com/docs/custom-skills/request-and-response-json-reference.html), including Serde JSON serialization/deserialization with some helpers to extract data from requests and format responses.
+Implements Amazon Alexa Skill request/response structs following the [Alexa skill specifications](https://developer.amazon.com/docs/custom-skills/request-and-response-json-reference.html), including Serde JSON serialization/deserialization with some helpers to extract data from requests and format responses.
 
 These structs can be used as the request and response using the Rust AWS Lambda runtime to implement the skill.
 
