@@ -7,6 +7,8 @@ use std::collections::HashMap;
 use std::fmt;
 
 impl Response {
+
+    /// Constructs a basic plain response with a simple card
     pub fn new_simple(title: &str, text: &str) -> Response {
         Response {
             version: String::from("1.0"),
@@ -20,6 +22,7 @@ impl Response {
         }
     }
 
+    /// Constructs an empty response ending the session
     pub fn end() -> Response {
         Response {
             version: String::from("1.0"),
@@ -34,6 +37,7 @@ impl Response {
     }
 }
 
+/// Response struct implementing the [Alexa JSON spec](https://developer.amazon.com/docs/custom-skills/request-and-response-json-reference.html#response-parameters)
 #[derive(Serialize,Deserialize,Debug,Clone)]
 pub struct Response {
     version: String,
@@ -72,6 +76,7 @@ impl fmt::Display for SpeechType {
     }
 }
 
+/// Play behavior for output speech
 pub enum PlayBehavior {
     Enqueue,
     ReplaceAll,
@@ -104,6 +109,8 @@ pub struct Speech {
 }
 
 impl Speech {
+
+    /// Constructs a plain text output speech
     pub fn plain(s: &str) -> Speech {
         Speech {
             speech_type: SpeechType::Plain.to_string(),
@@ -113,6 +120,7 @@ impl Speech {
         }
     }
 
+    /// Constructs an SSML output speech (with supplied SSML)
     pub fn ssml(s: &str) -> Speech {
         Speech {
             speech_type: SpeechType::Ssml.to_string(),
@@ -122,13 +130,15 @@ impl Speech {
         }
     }
 
+    /// Adds play behavior to a speech object
     pub fn play_behavior(&mut self, behavior: PlayBehavior) {
         self.play_behavior = Some(behavior.to_string());
     }
 }
 
+/// Types of cards for an Alexa response
 #[allow(dead_code)]
-enum CardType {
+pub enum CardType {
     Simple,
     Standard,
     LinkAccount,
@@ -162,6 +172,8 @@ pub struct Card {
 }
 
 impl Card {
+
+    /// Constructs a simple card for an Alexa repsonse object
     pub fn simple(title: &str, text: &str) -> Card {
         Card {
             card_type: CardType::Simple.to_string(),

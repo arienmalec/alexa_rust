@@ -6,6 +6,7 @@ use self::serde_derive::{Serialize, Deserialize};
 use std::convert::From;
 use std::collections::HashMap;
 
+/// Request struct corresponding to the [Alexa spec](https://developer.amazon.com/docs/custom-skills/request-and-response-json-reference.html#request-body-parameters)
 #[derive(Serialize,Deserialize,Debug,Clone)]
 pub struct Request {
 	version: String,
@@ -138,7 +139,8 @@ pub struct Value {
     id: String,
 }
 
-
+/// Enumeration of Alexa intent types
+/// Custom intents will be User enum values discrimiated by the `String` value
 #[derive(Debug,PartialEq)]
 pub enum IntentType {
     None,
@@ -162,6 +164,7 @@ pub enum IntentType {
     User(String)
 }
 
+/// Alexa standard locales
 #[derive(Debug,PartialEq)]
 pub enum Locale {
 	Italian,
@@ -176,6 +179,7 @@ pub enum Locale {
 }
 
 impl Locale {
+    /// returns true for all English speaking locals
     pub fn is_english(&self) -> bool {
         match *self {
             Locale::AmericanEnglish => true,
@@ -211,10 +215,13 @@ impl From<String> for Locale {
 }
 
 impl Request {
+
+    /// Extracts the locale from the request
     pub fn locale(&self) -> Locale {
         Locale::from(&*self.body.locale)
     }
 
+    /// Extracts the intent from the request
     pub fn intent(&self) -> IntentType {
         if let Some(ref i) = self.body.intent {
             match i.name.as_str() {
@@ -242,6 +249,7 @@ impl Request {
         }
     }
 
+    /// retrieves the string value of named slot from the request, if it exists
     pub fn slot_value(&self, slot: &str) -> Option<String> {
         if let Some(ref i) = self.body.intent {
             if let Some(ref s) = i.get_slot(slot) {
