@@ -261,6 +261,19 @@ impl Request {
             None
         }
     }
+
+    /// retrieves the attribute value with the given key, if it exists
+    pub fn attribute_value(&self, key: &str) -> Option<&String> {
+        if let Some(ref s) = self.session {
+            if let Some(ref h) = s.attributes {
+                h.get(&String::from(key))
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
 }
 
 #[cfg(test)]
@@ -315,6 +328,29 @@ mod tests {
         }
     }
 
+    #[test]
+    fn test_attribute() {
+        let p: Result<Request,serde_json::Error> = self::serde_json::from_str(default_req());
+        match p {
+            Ok(req) => {
+                assert!(req.session.is_some());
+                assert!(req.session.unwrap().attributes.is_some());
+            },
+            Err(e) => panic!(e.to_string())
+        }
+ 
+    }
+
+    #[test]
+    fn test_attribute_val() {
+        let p: Result<Request,serde_json::Error> = self::serde_json::from_str(default_req());
+        match p {
+            Ok(req) => assert_eq!(req.attribute_value("lastSpeech"), Some(&String::from("Jupiter has the shortest day of all the planets"))),
+            Err(e) => panic!(e.to_string())
+        }
+ 
+    }
+
 
     fn default_req () -> &'static str {
         r#"{
@@ -325,6 +361,9 @@ mod tests {
 		"application": {
 			"applicationId": "amzn1.ask.skill.myappid"
 		},
+        "attributes": {
+            "lastSpeech": "Jupiter has the shortest day of all the planets"
+        },
 		"user": {
 			"userId": "amzn1.ask.account.theuserid"
 		}
