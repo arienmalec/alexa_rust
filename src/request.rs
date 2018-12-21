@@ -96,12 +96,9 @@ pub struct Intent {
 }
 
 impl Intent {
-    fn get_slot<'a>(&'a self, name: &str) -> Option<&'a Slot> {
-        if let Some(ref h) = self.slots {
-             h.get(name)
-        } else {
-            return None
-        }
+    fn get_slot(&self, name: &str) -> Option<&Slot> {
+        self.slots.as_ref()?
+            .get(name)
     }
 }
 
@@ -251,28 +248,18 @@ impl Request {
 
     /// retrieves the string value of named slot from the request, if it exists
     pub fn slot_value(&self, slot: &str) -> Option<String> {
-        if let Some(ref i) = self.body.intent {
-            if let Some(ref s) = i.get_slot(slot) {
-                Some(s.value.clone())
-            } else {
-                None
-            }
-        } else {
-            None
-        }
+        Some(
+            self.body.intent.as_ref()?
+                .get_slot(slot).as_ref()?
+                .value.clone()
+            )
     }
 
     /// retrieves the attribute value with the given key, if it exists
     pub fn attribute_value(&self, key: &str) -> Option<&String> {
-        if let Some(ref s) = self.session {
-            if let Some(ref h) = s.attributes {
-                h.get(&String::from(key))
-            } else {
-                None
-            }
-        } else {
-            None
-        }
+        self.session.as_ref()?
+            .attributes.as_ref()?
+            .get(key)
     }
 }
 
