@@ -6,12 +6,25 @@ use self::serde_derive::{Serialize, Deserialize};
 use std::collections::HashMap;
 use std::fmt;
 
+enum Version {
+    V1_0
+}
+
+impl fmt::Display for Version {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let s = match *self {
+            Version::V1_0 => "1.0"
+        };
+        write!(f,"{}",s)
+    }
+}
+
 impl Response {
 
     /// Constructs a basic plain response with a simple card
     pub fn new_simple(title: &str, text: &str) -> Response {
         Response {
-            version: String::from("1.0"),
+            version: Version::V1_0.to_string(),
             session_attributes: None,
             body: ResBody {
                 output_speech: Some(Speech::plain(text)),
@@ -25,7 +38,7 @@ impl Response {
     /// Constructs an empty response ending the session
     pub fn end() -> Response {
         Response {
-            version: String::from("1.0"),
+            version: Version::V1_0.to_string(),
             session_attributes: None,
             body: ResBody {
                 output_speech: None,
