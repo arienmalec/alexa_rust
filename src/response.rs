@@ -235,6 +235,17 @@ impl Card {
             image: Some(image)
         }
     }
+
+    /// Constructs a link account card for the Alexa response object
+    pub fn link_account() -> Card {
+        Card {
+            card_type: CardType::LinkAccount.to_string(),
+            title: None,
+            content: None,
+            text: None,
+            image: None
+        }
+    }
 }
 
 #[derive(Serialize,Deserialize,Debug,Clone)]
