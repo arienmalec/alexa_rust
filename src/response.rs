@@ -51,14 +51,26 @@ impl Response {
         Response::new(true)
     }
 
+    /// adds a speach element to the response
     pub fn speech(mut self, speech: Speech) -> Self {
         self.body.output_speech = Some(speech);
         self
     }
 
+    /// adds a card to the response
     pub fn card(mut self, card: Card) -> Self {
         self.body.card = Some(card);
         self
+    }
+
+    pub fn add_attribute(&mut self, key: &str, val: &str) {
+        if let Some(ref mut h) = self.session_attributes {
+            let _ = h.insert(String::from(key), String::from(val));
+        } else {
+            let mut h = HashMap::new();
+            h.insert(String::from(key),String::from(val));
+            self.session_attributes = Some(h)
+        }
     }
 }
 
@@ -246,6 +258,22 @@ mod tests {
     fn test_version() {
         let r = Response::simple("hello, world", "hello, dude");
         assert_eq!(r.version, "1.0")  ; 
+    }
+
+    #[test]
+    fn test_builder() {
+        let mut res = Response::new(false)
+            .card(Card::standard("foo", "bar", Image {
+                small_image_url: Some(String::from("baaz.png")),
+                large_image_url: Some(String::from("baazLarge.png"))}))
+            .speech(Speech::plain("hello"));
+        res.add_attribute("attr", "value");
+        let t = res.body.card.as_ref().unwrap().title.as_ref().unwrap();
+        assert_eq!(t, "foo");
+        let txt = res.body.card.as_ref().unwrap().text.as_ref().unwrap();
+        assert_eq!(txt, "bar");
+        let attr = res.session_attributes.as_ref().unwrap().get("attr").unwrap();
+        assert_eq!(attr, "value");
     }
 
 
