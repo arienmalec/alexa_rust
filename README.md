@@ -20,7 +20,7 @@ use std::error::Error;
 
 
 fn my_handler(_req: Request, _ctx: Context) -> Result<Response,HandlerError> {
-    Ok(Response::new_simple("hello", "hello world"))
+    Ok(Response::simple("hello", "hello world"))
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -43,18 +43,18 @@ use alexa_sdk::request::{IntentType, Locale};
 use std::error::Error;
 
 fn handle_help(_req: &Request) -> Result<Response,HandlerError> {
-    Ok(Response::new_simple("hello", "to say hello, tell me: say hello to someone"))
+    Ok(Response::simple("hello", "to say hello, tell me: say hello to someone"))
 }
 
 fn handle_hello(req: &Request) -> Result<Response,HandlerError> {
     let res = match req.locale() {
-        Locale::AustralianEnglish => Response::new_simple("hello", "G'day mate"),
-        Locale::German => Response::new_simple("hello", "Hallo Welt"),
-        Locale::Japanese => Response::new_simple("hello", "こんにちは世界"),
+        Locale::AustralianEnglish => Response::simple("hello", "G'day mate"),
+        Locale::German => Response::simple("hello", "Hallo Welt"),
+        Locale::Japanese => Response::simple("hello", "こんにちは世界"),
         _ => if let Some(ref s) = req.slot_value("name") {
-            Response::new_simple("hello", (String::from("hello ") + s).as_str())
+            Response::simple("hello", (String::from("hello ") + s).as_str())
         } else {
-            Response::new_simple("hello", "hello world")
+            Response::simple("hello", "hello world")
         },
     };
     Ok(res)

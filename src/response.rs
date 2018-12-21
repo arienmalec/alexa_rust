@@ -23,6 +23,11 @@ impl Response {
 
     /// Constructs a basic plain response with a simple card
     pub fn new_simple(title: &str, text: &str) -> Response {
+        Response::simple(title, text)
+    }
+
+    /// Constructs a basic plain response with a simple card
+    pub fn simple(title: &str, text: &str) -> Response {
         Response {
             version: Version::V1_0.to_string(),
             session_attributes: None,
@@ -221,7 +226,7 @@ mod tests {
 
     #[test]
     fn test_version() {
-        let r = Response::new_simple("hello, world", "hello, dude");
+        let r = Response::simple("hello, world", "hello, dude");
         assert_eq!(r.version, "1.0")  ; 
     }
 
@@ -229,7 +234,7 @@ mod tests {
     #[test]
     fn test_title() {
         let t = "hello, world";
-        let r = Response::new_simple(t, "hello, dude");
+        let r = Response::simple(t, "hello, dude");
 
         assert_eq!(r.body.card.unwrap().title.unwrap(), t); 
     }
@@ -237,14 +242,14 @@ mod tests {
     #[test]
     fn test_text() {
         let t = "hello, dude";
-        let r = Response::new_simple("hello,world", t);
+        let r = Response::simple("hello,world", t);
 
         assert_eq!(r.body.card.unwrap().content.unwrap(), t); 
     }
 
     #[test]
     fn test_should_end() {
-        let r = Response::new_simple("foo", "bar");
+        let r = Response::simple("foo", "bar");
         assert_eq!(r.body.should_end_session,true);
     }
 
