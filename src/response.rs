@@ -21,27 +21,7 @@ impl fmt::Display for Version {
 
 impl Response {
 
-    /// Constructs a basic plain response with a simple card
-    pub fn new_simple(title: &str, text: &str) -> Response {
-        Response::simple(title, text)
-    }
-
-    /// Constructs a basic plain response with a simple card
-    pub fn simple(title: &str, text: &str) -> Response {
-        Response {
-            version: Version::V1_0.to_string(),
-            session_attributes: None,
-            body: ResBody {
-                output_speech: Some(Speech::plain(text)),
-                card: Some(Card::simple(title, text)),
-                reprompt: None,
-                should_end_session: true
-            }
-        }
-    }
-
-    /// Constructs an empty response ending the session
-    pub fn end() -> Response {
+    pub fn new(should_end: bool) -> Response {
         Response {
             version: Version::V1_0.to_string(),
             session_attributes: None,
@@ -49,9 +29,36 @@ impl Response {
                 output_speech: None,
                 card: None,
                 reprompt: None,
-                should_end_session: true
+                should_end_session: should_end
             }
         }
+    }
+
+    /// Constructs a basic plain response with a simple card
+    pub fn new_simple(title: &str, text: &str) -> Response {
+        Response::simple(title, text)
+    }
+
+    /// Constructs a basic plain response with a simple card
+    pub fn simple(title: &str, text: &str) -> Response {
+        Response::new(true)
+            .card(Card::simple(title, text))
+            .speech(Speech::plain(text))
+    }
+
+    /// Constructs an empty response ending the session
+    pub fn end() -> Response {
+        Response::new(true)
+    }
+
+    pub fn speech(mut self, speech: Speech) -> Self {
+        self.body.output_speech = Some(speech);
+        self
+    }
+
+    pub fn card(mut self, card: Card) -> Self {
+        self.body.card = Some(card);
+        self
     }
 }
 
@@ -199,6 +206,17 @@ impl Card {
             content: Some(String::from(text)),
             text: None,
             image: None,
+        }
+    }
+
+    /// Constructs a standard card for an Alexa response object
+    pub fn standard(title: &str, text: &str, image: Image) -> Card {
+        Card {
+            card_type: CardType::Standard.to_string(),
+            title: Some(String::from(title)),
+            content: None,
+            text: Some(String::from(text)),
+            image: Some(image)
         }
     }
 }
