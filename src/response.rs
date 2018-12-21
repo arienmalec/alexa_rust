@@ -21,6 +21,7 @@ impl fmt::Display for Version {
 
 impl Response {
 
+    /// Constructs a new response with only required elements
     pub fn new(should_end: bool) -> Response {
         Response {
             version: Version::V1_0.to_string(),
@@ -63,6 +64,9 @@ impl Response {
         self
     }
 
+    /// adds an attribute key/value pair to the response
+    /// attributes can be read on the next request for basic state
+    /// persistance
     pub fn add_attribute(&mut self, key: &str, val: &str) {
         if let Some(ref mut h) = self.session_attributes {
             let _ = h.insert(String::from(key), String::from(val));
