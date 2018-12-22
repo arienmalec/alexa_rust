@@ -192,7 +192,7 @@ impl fmt::Display for CardType {
             CardType::Simple => "Simple",
             CardType::Standard => "Standard",
             CardType::LinkAccount => "LinkAccount",
-            CardType::AskForPermission => "AskForPermisson"
+            CardType::AskForPermission => "AskForPermissonConsent"
         };
         write!(f,"{}",s)
     }
@@ -210,6 +210,8 @@ pub struct Card {
     text: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     image: Option<Image>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    permissions: Option<Vec<String>>,
 }
 
 impl Card {
@@ -222,6 +224,7 @@ impl Card {
             content: Some(String::from(text)),
             text: None,
             image: None,
+            permissions: None,
         }
     }
 
@@ -232,7 +235,8 @@ impl Card {
             title: Some(String::from(title)),
             content: None,
             text: Some(String::from(text)),
-            image: Some(image)
+            image: Some(image),
+            permissions: None,
         }
     }
 
@@ -243,9 +247,23 @@ impl Card {
             title: None,
             content: None,
             text: None,
-            image: None
+            image: None,
+            permissions: None,
         }
     }
+
+    /// Constructs a permissions request card with the requested permissions
+    pub fn ask_for_permission(permissions: Vec<String>) -> Card {
+        Card {
+            card_type: CardType::AskForPermission.to_string(),
+            title: None,
+            content: None,
+            text: None,
+            image: None,
+            permissions: Some(permissions),
+        }
+    }
+
 }
 
 #[derive(Serialize,Deserialize,Debug,Clone)]
