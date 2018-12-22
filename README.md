@@ -32,7 +32,6 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 A more complete skill, handling multiple locales and a slot:
 
-
 ```rust
 extern crate lambda_runtime as lambda;
 extern crate alexa_sdk;
