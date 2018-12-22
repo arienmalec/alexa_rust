@@ -77,3 +77,24 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 ```
+
+### Reponse Builder
+
+Besides the simplifed Response constructors `Response::simple` and `Response::end` (to end a session), the SDK supports a Response builder:
+
+```rust
+let img = Image {
+    small_image_url: Some(String::from("https://example.com/baaz.png")),
+    large_image_url: Some(String::from("https://example.com/baazLarge.png"))
+};
+let mut res = Response::new(false) // should not end session
+    .card(Card::standard("foo", "bar", img))
+    .speech(Speech::plain("hello"));
+res.add_attribute("attr", "value");
+```
+
+### Attributes
+
+Alexa skills support attributes, which can be used to carry simple state in a session. To set an attribute in the response, use `add_attribute` on the response, to read a previously set attribute on a subsequent request, use `attribute_value` on the request.
+
+[TODO: example]
