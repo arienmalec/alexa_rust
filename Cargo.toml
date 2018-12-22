@@ -7,6 +7,7 @@ license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/arienmalec/alexa_rust"
 repository = "https://github.com/arienmalec/alexa_rust"
+keywords = ["alexa", "amazon"]
 edition = "2018"
 
 [dependencies]
