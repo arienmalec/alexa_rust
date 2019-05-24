@@ -282,6 +282,25 @@ pub struct Image {
     large_image_url: Option<String>,
 }
 
+impl Image {
+
+    pub fn new() -> Image {
+        Image {
+            small_image_url: None,
+            large_image_url: None
+        }
+    }
+
+    pub fn small_image_url(mut self, url: String) -> Self {
+        self.small_image_url = Some(url);
+        self
+    }
+
+    pub fn large_image_url(mut self, url: String) -> Self {
+        self.large_image_url = Some(url);
+        self
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -309,6 +328,21 @@ mod tests {
         assert_eq!(attr, "value");
     }
 
+    #[test]
+    fn test_builder_2() {
+        let mut res = Response::new(false)
+            .card(Card::standard("foo", "bar", Image::new()
+                .small_image_url(String::from("baaz.png"))
+                .large_image_url(String::from("baazLarge.png"))))
+            .speech(Speech::plain("hello"));
+        res.add_attribute("attr", "value");
+        let t = res.body.card.as_ref().unwrap().title.as_ref().unwrap();
+        assert_eq!(t, "foo");
+        let txt = res.body.card.as_ref().unwrap().text.as_ref().unwrap();
+        assert_eq!(txt, "bar");
+        let attr = res.session_attributes.as_ref().unwrap().get("attr").unwrap();
+        assert_eq!(attr, "value");
+    }
 
     #[test]
     fn test_title() {
@@ -331,5 +365,4 @@ mod tests {
         let r = Response::simple("foo", "bar");
         assert_eq!(r.body.should_end_session,true);
     }
-
 }
