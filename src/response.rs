@@ -329,7 +329,7 @@ mod tests {
     }
 
     #[test]
-    fn test_builder_2() {
+    fn test_builder_with_image_builder() {
         let mut res = Response::new(false)
             .card(Card::standard("foo", "bar", Image::new()
                 .small_image_url(String::from("baaz.png"))
@@ -340,6 +340,14 @@ mod tests {
         assert_eq!(t, "foo");
         let txt = res.body.card.as_ref().unwrap().text.as_ref().unwrap();
         assert_eq!(txt, "bar");
+        let small_img = res.body.card.as_ref()
+            .unwrap().image.as_ref().unwrap().small_image_url.as_ref().unwrap();
+        let large_img = res.body.card.as_ref()
+            .unwrap().image.as_ref().unwrap().large_image_url.as_ref().unwrap();
+
+        assert_eq!(small_img, "baaz.png");
+        assert_eq!(large_img, "baazLarge.png");
+
         let attr = res.session_attributes.as_ref().unwrap().get("attr").unwrap();
         assert_eq!(attr, "value");
     }
