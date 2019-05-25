@@ -1,6 +1,6 @@
 [package]
 name = "alexa_sdk"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Arien Malec <arien.malec@gmail.com>"]
 description = "Implements Request/Response for Amazon Alexa skills"
 license = "MIT"
