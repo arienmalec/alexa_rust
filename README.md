@@ -66,6 +66,7 @@ fn handle_cancel(_req: &Request) -> Result<Response,HandlerError> {
 fn my_handler(req: Request, _ctx: Context) -> Result<Response,HandlerError> {
     match req.intent() {
         IntentType::Help => handle_help(&req),
+        IntentType::Cancel => handle_cancel(&req),
         IntentType::User(_) => handle_hello(&req),
         _ => handle_cancel (&req)
     }
