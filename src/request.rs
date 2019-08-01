@@ -137,6 +137,35 @@ pub struct Value {
     id: String,
 }
 
+/// Enumeration of Alexa request types
+/// Not comprehensive, ones not defined are put into the Other `String` value
+#[derive(Debug, PartialEq)]
+pub enum ReqType {
+    LaunchRequest,
+    IntentRequest,
+    SessionEndedRequest,
+    CanFulfillIntentRequest,
+    Other(String),
+}
+
+impl<'a> From<&'a str> for ReqType {
+    fn from(s: &'a str) -> ReqType {
+        match s {
+            "LaunchRequest" => ReqType::LaunchRequest,
+            "IntentRequest" => ReqType::IntentRequest,
+            "SessionEndedRequest" => ReqType::SessionEndedRequest,
+            "CanFulfillIntentRequest" => ReqType::CanFulfillIntentRequest,
+            _ => ReqType::Other(s.to_string()),
+        }
+    }
+}
+
+impl From<String> for ReqType {
+    fn from(s: String) -> ReqType {
+        ReqType::from(s.as_str())
+    }
+}
+
 /// Enumeration of Alexa intent types
 /// Custom intents will be User enum values discrimiated by the `String` value
 #[derive(Debug, PartialEq)]
@@ -213,6 +242,11 @@ impl From<String> for Locale {
 }
 
 impl Request {
+    /// Extracts the request type from the request
+    pub fn reqtype(&self) -> ReqType {
+        ReqType::from(&*self.body.reqtype)
+    }
+
     /// Extracts the locale from the request
     pub fn locale(&self) -> Locale {
         Locale::from(&*self.body.locale)
