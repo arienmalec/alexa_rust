@@ -263,6 +263,14 @@ impl Request {
     pub fn attribute_value(&self, key: &str) -> Option<&String> {
         self.session.as_ref()?.attributes.as_ref()?.get(key)
     }
+
+    /// returns whether or not this is a new request
+    pub fn is_new(&self) -> bool {
+        match &self.session {
+            Some(s) => s.new,
+            None => false,
+        }
+    }
 }
 
 #[cfg(test)]
