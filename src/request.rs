@@ -9,88 +9,88 @@ use std::convert::From;
 /// Request struct corresponding to the [Alexa spec](https://developer.amazon.com/docs/custom-skills/request-and-response-json-reference.html#request-body-parameters)
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Request {
-    version: String,
-    session: Option<Session>,
+    pub version: String,
+    pub session: Option<Session>,
     #[serde(rename = "request")]
-    body: ReqBody,
-    context: Context,
+    pub body: ReqBody,
+    pub context: Context,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Session {
-    new: bool,
+    pub new: bool,
     #[serde(rename = "sessionId")]
-    session_id: String,
-    attributes: Option<HashMap<String, String>>,
-    application: Application,
-    user: User,
+    pub session_id: String,
+    pub attributes: Option<HashMap<String, String>>,
+    pub application: Application,
+    pub user: User,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Application {
     #[serde(rename = "applicationId")]
-    application_id: String,
+    pub application_id: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct User {
     #[serde(rename = "userId")]
-    user_id: String,
+    pub user_id: String,
     #[serde(rename = "accessToken")]
-    access_token: Option<String>,
+    pub access_token: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Device {
     #[serde(rename = "deviceId")]
-    device_id: String,
+    pub device_id: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ReqBody {
     #[serde(rename = "type")]
-    reqtype: String,
+    pub reqtype: String,
     #[serde(rename = "requestId")]
-    request_id: String,
-    timestamp: String,
-    locale: String,
-    intent: Option<Intent>,
-    reason: Option<String>,
+    pub request_id: String,
+    pub timestamp: String,
+    pub locale: String,
+    pub intent: Option<Intent>,
+    pub reason: Option<String>,
     #[serde(rename = "dialogState")]
-    dialog_state: Option<String>,
+    pub dialog_state: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Context {
     #[serde(rename = "System")]
-    system: System,
+    pub system: System,
     #[serde(rename = "AudioPlayer")]
-    audio_player: Option<AudioPlayer>,
+    pub audio_player: Option<AudioPlayer>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct System {
     #[serde(rename = "apiAccessToken")]
-    api_access_token: String,
-    device: Option<Device>,
-    application: Option<Application>,
+    pub api_access_token: Option<String>,
+    pub device: Option<Device>,
+    pub application: Option<Application>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct AudioPlayer {
-    token: String,
+    pub token: Option<String>,
     #[serde(rename = "offsetInMilliseconds")]
-    offset_in_milliseconds: u64,
+    pub offset_in_milliseconds: Option<u64>,
     #[serde(rename = "playerActivity")]
-    player_activity: String,
+    pub player_activity: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Intent {
-    name: String,
+    pub name: String,
     #[serde(rename = "confirmationStatus")]
-    confirmation_status: String,
-    slots: Option<HashMap<String, Slot>>,
+    pub confirmation_status: Option<String>,
+    pub slots: Option<HashMap<String, Slot>>,
 }
 
 impl Intent {
@@ -101,40 +101,69 @@ impl Intent {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Slot {
-    name: String,
-    value: String,
+    pub name: String,
+    pub value: String,
     #[serde(rename = "confirmationStatus")]
-    confirmation_status: String,
-    resolutions: Option<Resolution>,
+    pub confirmation_status: Option<String>,
+    pub resolutions: Option<Resolution>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Resolution {
     #[serde(rename = "resolutionsPerAuthority")]
-    resolutions_per_authority: Vec<ResolutionsPerAuthority>,
+    pub resolutions_per_authority: Vec<ResolutionsPerAuthority>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ResolutionsPerAuthority {
-    authority: String,
-    status: Status,
-    values: Vec<ValueWrapper>,
+    pub authority: String,
+    pub status: Status,
+    pub values: Vec<ValueWrapper>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Status {
-    code: String,
+    pub code: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ValueWrapper {
-    value: Value,
+    pub value: Value,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Value {
-    name: String,
-    id: String,
+    pub name: String,
+    pub id: String,
+}
+
+/// Enumeration of Alexa request types
+/// Not comprehensive, ones not defined are put into the Other `String` value
+#[derive(Debug, PartialEq)]
+pub enum ReqType {
+    LaunchRequest,
+    IntentRequest,
+    SessionEndedRequest,
+    CanFulfillIntentRequest,
+    Other(String),
+}
+
+impl<'a> From<&'a str> for ReqType {
+    fn from(s: &'a str) -> ReqType {
+        match s {
+            "LaunchRequest" => ReqType::LaunchRequest,
+            "IntentRequest" => ReqType::IntentRequest,
+            "SessionEndedRequest" => ReqType::SessionEndedRequest,
+            "CanFulfillIntentRequest" => ReqType::CanFulfillIntentRequest,
+            _ => ReqType::Other(s.to_string()),
+        }
+    }
+}
+
+impl From<String> for ReqType {
+    fn from(s: String) -> ReqType {
+        ReqType::from(s.as_str())
+    }
 }
 
 /// Enumeration of Alexa intent types
@@ -147,6 +176,7 @@ pub enum IntentType {
     Fallback,
     LoopOff,
     LoopOn,
+    NavigateHome,
     Next,
     No,
     Pause,
@@ -213,6 +243,11 @@ impl From<String> for Locale {
 }
 
 impl Request {
+    /// Extracts the request type from the request
+    pub fn reqtype(&self) -> ReqType {
+        ReqType::from(&*self.body.reqtype)
+    }
+
     /// Extracts the locale from the request
     pub fn locale(&self) -> Locale {
         Locale::from(&*self.body.locale)
@@ -227,6 +262,7 @@ impl Request {
                 "AMAZON.FallbackIntent" => IntentType::Fallback,
                 "AMAZON.LoopOffIntent" => IntentType::LoopOff,
                 "AMAZON.LoopOnIntent" => IntentType::LoopOn,
+                "AMAZON.NavigateHomeIntent" => IntentType::NavigateHome,
                 "AMAZON.NextIntent" => IntentType::Next,
                 "AMAZON.NoIntent" => IntentType::No,
                 "AMAZON.PauseIntent" => IntentType::Pause,
@@ -262,6 +298,14 @@ impl Request {
     /// retrieves the attribute value with the given key, if it exists
     pub fn attribute_value(&self, key: &str) -> Option<&String> {
         self.session.as_ref()?.attributes.as_ref()?.get(key)
+    }
+
+    /// returns whether or not this is a new request
+    pub fn is_new(&self) -> bool {
+        match &self.session {
+            Some(s) => s.new,
+            None => false,
+        }
     }
 }
 
