@@ -203,6 +203,12 @@ pub enum Locale {
     IndianEnglish,
     AmericanEnglish,
     Japanese,
+	Spanish,
+	MexicanSpanish,
+	AmericanSpanish,
+	French,
+	CanadianFrench,
+	BrazilianPortuguese,
     Unknown,
 }
 
@@ -215,6 +221,21 @@ impl Locale {
             Locale::CanadianEnglish => true,
             Locale::BritishEnglish => true,
             Locale::IndianEnglish => true,
+            _ => false,
+        }
+    }
+    pub fn is_french(&self) -> bool {
+        match *self {
+            Locale::French => true,
+            Locale::CanadianFrench => true,
+            _ => false,
+        }
+    }
+    pub fn is_spanish(&self) -> bool {
+        match *self {
+            Locale::Spanish => true,
+            Locale::AmericanSpanish => true,
+            Locale::MexicanSpanish => true,
             _ => false,
         }
     }
@@ -231,6 +252,12 @@ impl<'a> From<&'a str> for Locale {
             "en-IN" => Locale::IndianEnglish,
             "en-US" => Locale::AmericanEnglish,
             "ja-JP" => Locale::Japanese,
+			"es-ES" => Locale::Spanish,
+			"es-MX" => Locale::MexicanSpanish,
+			"es-US" => Locale::AmericanSpanish,
+			"fr-FR" => Locale::French,
+			"fr-CA" => Locale::CanadianFrench,
+			"pt-BR" => Locale::BrazilianPortuguese,
             _ => Locale::Unknown,
         }
     }
@@ -341,6 +368,23 @@ mod tests {
     }
 
     #[test]
+    fn test_is_spanish() {
+        let p: Result<Request, serde_json::Error> = self::serde_json::from_str(default_spanish_req());
+        match p {
+            Ok(req) => assert!(req.locale().is_spanish()),
+            Err(e) => panic!(e.to_string()),
+        }
+    }
+
+    #[test]
+    fn test_is_french() {
+        let p: Result<Request, serde_json::Error> = self::serde_json::from_str(default_french_req());
+        match p {
+            Ok(req) => assert!(req.locale().is_french()),
+            Err(e) => panic!(e.to_string()),
+        }
+    }
+    #[test]
     fn test_intent() {
         let p: Result<Request, serde_json::Error> = self::serde_json::from_str(default_req());
         match p {
@@ -384,6 +428,132 @@ mod tests {
         }
     }
 
+    fn default_spanish_req() -> &'static str {
+        r#"{
+	"version": "1.0",
+	"session": {
+		"new": true,
+		"sessionId": "amzn1.echo-api.session.abc123",
+		"application": {
+			"applicationId": "amzn1.ask.skill.myappid"
+		},
+        "attributes": {
+            "lastSpeech": "Jupiter has the shortest day of all the planets"
+        },
+		"user": {
+			"userId": "amzn1.ask.account.theuserid"
+		}
+	},
+	"context": {
+		"System": {
+			"application": {
+				"applicationId": "amzn1.ask.skill.myappid"
+			},
+			"user": {
+				"userId": "amzn1.ask.account.theuserid"
+			},
+			"device": {
+				"deviceId": "amzn1.ask.device.superfakedevice",
+				"supportedInterfaces": {}
+			},
+			"apiEndpoint": "https://api.amazonalexa.com",
+			"apiAccessToken": "53kr14t.k3y.d4t4-otherstuff"
+		},
+		"Viewport": {
+			"experiences": [
+				{
+					"arcMinuteWidth": 246,
+					"arcMinuteHeight": 144,
+					"canRotate": false,
+					"canResize": false
+				}
+			],
+			"shape": "RECTANGLE",
+			"pixelWidth": 1024,
+			"pixelHeight": 600,
+			"dpi": 160,
+			"currentPixelWidth": 1024,
+			"currentPixelHeight": 600,
+			"touch": [
+				"SINGLE"
+			]
+		}
+	},
+	"request": {
+		"type": "IntentRequest",
+		"requestId": "amzn1.echo-api.request.b8b49fde-4370-423f-bbb0-dc7305b788a0",
+		"timestamp": "2018-12-03T00:33:58Z",
+		"locale": "es-MX",
+		"intent": {
+			"name": "hello",
+			"confirmationStatus": "NONE"
+		}
+	}
+}"#
+    }
+    fn default_french_req() -> &'static str {
+        r#"{
+	"version": "1.0",
+	"session": {
+		"new": true,
+		"sessionId": "amzn1.echo-api.session.abc123",
+		"application": {
+			"applicationId": "amzn1.ask.skill.myappid"
+		},
+        "attributes": {
+            "lastSpeech": "Jupiter has the shortest day of all the planets"
+        },
+		"user": {
+			"userId": "amzn1.ask.account.theuserid"
+		}
+	},
+	"context": {
+		"System": {
+			"application": {
+				"applicationId": "amzn1.ask.skill.myappid"
+			},
+			"user": {
+				"userId": "amzn1.ask.account.theuserid"
+			},
+			"device": {
+				"deviceId": "amzn1.ask.device.superfakedevice",
+				"supportedInterfaces": {}
+			},
+			"apiEndpoint": "https://api.amazonalexa.com",
+			"apiAccessToken": "53kr14t.k3y.d4t4-otherstuff"
+		},
+		"Viewport": {
+			"experiences": [
+				{
+					"arcMinuteWidth": 246,
+					"arcMinuteHeight": 144,
+					"canRotate": false,
+					"canResize": false
+				}
+			],
+			"shape": "RECTANGLE",
+			"pixelWidth": 1024,
+			"pixelHeight": 600,
+			"dpi": 160,
+			"currentPixelWidth": 1024,
+			"currentPixelHeight": 600,
+			"touch": [
+				"SINGLE"
+			]
+		}
+	},
+	"request": {
+		"type": "IntentRequest",
+		"requestId": "amzn1.echo-api.request.b8b49fde-4370-423f-bbb0-dc7305b788a0",
+		"timestamp": "2018-12-03T00:33:58Z",
+		"locale": "fr-CA",
+		"intent": {
+			"name": "hello",
+			"confirmationStatus": "NONE"
+		}
+	}
+}"#
+    }
     fn default_req() -> &'static str {
         r#"{
 	"version": "1.0",
