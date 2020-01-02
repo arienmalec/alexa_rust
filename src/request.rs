@@ -371,7 +371,8 @@ mod tests {
 
     #[test]
     fn test_is_spanish() {
-        let p: Result<Request, serde_json::Error> = self::serde_json::from_str(default_spanish_req());
+        let p: Result<Request, serde_json::Error> =
+            self::serde_json::from_str(default_spanish_req());
         match p {
             Ok(req) => assert!(req.locale().is_spanish()),
             Err(e) => panic!(e.to_string()),
@@ -380,7 +381,8 @@ mod tests {
 
     #[test]
     fn test_is_french() {
-        let p: Result<Request, serde_json::Error> = self::serde_json::from_str(default_french_req());
+        let p: Result<Request, serde_json::Error> =
+            self::serde_json::from_str(default_french_req());
         match p {
             Ok(req) => assert!(req.locale().is_french()),
             Err(e) => panic!(e.to_string()),
