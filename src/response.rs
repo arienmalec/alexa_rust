@@ -1,26 +1,25 @@
-extern crate serde_derive;
 extern crate serde;
+extern crate serde_derive;
 extern crate serde_json;
 
-use self::serde_derive::{Serialize, Deserialize};
+use self::serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
 
 enum Version {
-    V1_0
+    V1_0,
 }
 
 impl fmt::Display for Version {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let s = match *self {
-            Version::V1_0 => "1.0"
+            Version::V1_0 => "1.0",
         };
-        write!(f,"{}",s)
+        write!(f, "{}", s)
     }
 }
 
 impl Response {
-
     /// Constructs a new response with only required elements
     pub fn new(should_end: bool) -> Response {
         Response {
@@ -30,8 +29,8 @@ impl Response {
                 output_speech: None,
                 card: None,
                 reprompt: None,
-                should_end_session: should_end
-            }
+                should_end_session: should_end,
+            },
         }
     }
 
@@ -72,24 +71,24 @@ impl Response {
             let _ = h.insert(String::from(key), String::from(val));
         } else {
             let mut h = HashMap::new();
-            h.insert(String::from(key),String::from(val));
+            h.insert(String::from(key), String::from(val));
             self.session_attributes = Some(h)
         }
     }
 }
 
 /// Response struct implementing the [Alexa JSON spec](https://developer.amazon.com/docs/custom-skills/request-and-response-json-reference.html#response-parameters)
-#[derive(Serialize,Deserialize,Debug,Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Response {
     version: String,
     #[serde(rename = "sessionAttributes")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    session_attributes: Option<HashMap<String,String>>,
+    session_attributes: Option<HashMap<String, String>>,
     #[serde(rename = "response")]
-    body: ResBody
+    body: ResBody,
 }
 
-#[derive(Serialize,Deserialize,Debug,Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ResBody {
     #[serde(rename = "outputSpeech")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -104,16 +103,16 @@ pub struct ResBody {
 
 enum SpeechType {
     Plain,
-    Ssml
+    Ssml,
 }
 
 impl fmt::Display for SpeechType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let s = match *self {
             SpeechType::Plain => "PlainText",
-            SpeechType::Ssml => "SSML"
+            SpeechType::Ssml => "SSML",
         };
-        write!(f,"{}",s)
+        write!(f, "{}", s)
     }
 }
 
@@ -121,22 +120,21 @@ impl fmt::Display for SpeechType {
 pub enum PlayBehavior {
     Enqueue,
     ReplaceAll,
-    ReplaceEnqueued
+    ReplaceEnqueued,
 }
 
 impl fmt::Display for PlayBehavior {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let s = match *self {
-            PlayBehavior::Enqueue         => "ENQUEUE",
-            PlayBehavior::ReplaceAll      => "REPLACE_ALL",
+            PlayBehavior::Enqueue => "ENQUEUE",
+            PlayBehavior::ReplaceAll => "REPLACE_ALL",
             PlayBehavior::ReplaceEnqueued => "REPLACE_ENQUEUED",
         };
-        write!(f,"{}",s)
+        write!(f, "{}", s)
     }
 }
 
-
-#[derive(Serialize,Deserialize,Debug,Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Speech {
     #[serde(rename = "type")]
     speech_type: String,
@@ -146,18 +144,17 @@ pub struct Speech {
     ssml: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "playBehavior")]
-    play_behavior: Option<String>
+    play_behavior: Option<String>,
 }
 
 impl Speech {
-
     /// Constructs a plain text output speech
     pub fn plain(s: &str) -> Speech {
         Speech {
             speech_type: SpeechType::Plain.to_string(),
             text: Some(String::from(s)),
             ssml: None,
-            play_behavior: None
+            play_behavior: None,
         }
     }
 
@@ -167,7 +164,7 @@ impl Speech {
             speech_type: SpeechType::Ssml.to_string(),
             ssml: Some(String::from(s)),
             text: None,
-            play_behavior: None
+            play_behavior: None,
         }
     }
 
@@ -192,13 +189,13 @@ impl fmt::Display for CardType {
             CardType::Simple => "Simple",
             CardType::Standard => "Standard",
             CardType::LinkAccount => "LinkAccount",
-            CardType::AskForPermission => "AskForPermissonConsent"
+            CardType::AskForPermission => "AskForPermissonConsent",
         };
-        write!(f,"{}",s)
+        write!(f, "{}", s)
     }
 }
 
-#[derive(Serialize,Deserialize,Debug,Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Card {
     #[serde(rename = "type")]
     card_type: String,
@@ -215,7 +212,6 @@ pub struct Card {
 }
 
 impl Card {
-
     /// Constructs a simple card for an Alexa repsonse object
     pub fn simple(title: &str, text: &str) -> Card {
         Card {
@@ -263,16 +259,15 @@ impl Card {
             permissions: Some(permissions),
         }
     }
-
 }
 
-#[derive(Serialize,Deserialize,Debug,Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Reprompt {
     #[serde(rename = "outputSpeech")]
     output_speech: Speech,
 }
 
-#[derive(Serialize,Deserialize,Debug,Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Image {
     #[serde(rename = "smallImageUrl")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -283,12 +278,8 @@ pub struct Image {
 }
 
 impl Image {
-
     pub fn new() -> Image {
-        Image {
-            small_image_url: None,
-            large_image_url: None
-        }
+        Image::default()
     }
 
     pub fn small_image_url(mut self, url: String) -> Self {
@@ -302,6 +293,15 @@ impl Image {
     }
 }
 
+impl Default for Image {
+    fn default() -> Self {
+        Image {
+            small_image_url: None,
+            large_image_url: None,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -309,46 +309,83 @@ mod tests {
     #[test]
     fn test_version() {
         let r = Response::simple("hello, world", "hello, dude");
-        assert_eq!(r.version, "1.0")  ; 
+        assert_eq!(r.version, "1.0");
     }
 
     #[test]
     fn test_builder() {
         let mut res = Response::new(false)
-            .card(Card::standard("foo", "bar", Image {
-                small_image_url: Some(String::from("baaz.png")),
-                large_image_url: Some(String::from("baazLarge.png"))}))
+            .card(Card::standard(
+                "foo",
+                "bar",
+                Image {
+                    small_image_url: Some(String::from("baaz.png")),
+                    large_image_url: Some(String::from("baazLarge.png")),
+                },
+            ))
             .speech(Speech::plain("hello"));
         res.add_attribute("attr", "value");
         let t = res.body.card.as_ref().unwrap().title.as_ref().unwrap();
         assert_eq!(t, "foo");
         let txt = res.body.card.as_ref().unwrap().text.as_ref().unwrap();
         assert_eq!(txt, "bar");
-        let attr = res.session_attributes.as_ref().unwrap().get("attr").unwrap();
+        let attr = res
+            .session_attributes
+            .as_ref()
+            .unwrap()
+            .get("attr")
+            .unwrap();
         assert_eq!(attr, "value");
     }
 
     #[test]
     fn test_builder_with_image_builder() {
         let mut res = Response::new(false)
-            .card(Card::standard("foo", "bar", Image::new()
-                .small_image_url(String::from("baaz.png"))
-                .large_image_url(String::from("baazLarge.png"))))
+            .card(Card::standard(
+                "foo",
+                "bar",
+                Image::new()
+                    .small_image_url(String::from("baaz.png"))
+                    .large_image_url(String::from("baazLarge.png")),
+            ))
             .speech(Speech::plain("hello"));
         res.add_attribute("attr", "value");
         let t = res.body.card.as_ref().unwrap().title.as_ref().unwrap();
         assert_eq!(t, "foo");
         let txt = res.body.card.as_ref().unwrap().text.as_ref().unwrap();
         assert_eq!(txt, "bar");
-        let small_img = res.body.card.as_ref()
-            .unwrap().image.as_ref().unwrap().small_image_url.as_ref().unwrap();
-        let large_img = res.body.card.as_ref()
-            .unwrap().image.as_ref().unwrap().large_image_url.as_ref().unwrap();
+        let small_img = res
+            .body
+            .card
+            .as_ref()
+            .unwrap()
+            .image
+            .as_ref()
+            .unwrap()
+            .small_image_url
+            .as_ref()
+            .unwrap();
+        let large_img = res
+            .body
+            .card
+            .as_ref()
+            .unwrap()
+            .image
+            .as_ref()
+            .unwrap()
+            .large_image_url
+            .as_ref()
+            .unwrap();
 
         assert_eq!(small_img, "baaz.png");
         assert_eq!(large_img, "baazLarge.png");
 
-        let attr = res.session_attributes.as_ref().unwrap().get("attr").unwrap();
+        let attr = res
+            .session_attributes
+            .as_ref()
+            .unwrap()
+            .get("attr")
+            .unwrap();
         assert_eq!(attr, "value");
     }
 
@@ -357,7 +394,7 @@ mod tests {
         let t = "hello, world";
         let r = Response::simple(t, "hello, dude");
 
-        assert_eq!(r.body.card.unwrap().title.unwrap(), t); 
+        assert_eq!(r.body.card.unwrap().title.unwrap(), t);
     }
 
     #[test]
@@ -365,12 +402,12 @@ mod tests {
         let t = "hello, dude";
         let r = Response::simple("hello,world", t);
 
-        assert_eq!(r.body.card.unwrap().content.unwrap(), t); 
+        assert_eq!(r.body.card.unwrap().content.unwrap(), t);
     }
 
     #[test]
     fn test_should_end() {
         let r = Response::simple("foo", "bar");
-        assert_eq!(r.body.should_end_session,true);
+        assert_eq!(r.body.should_end_session, true);
     }
 }
