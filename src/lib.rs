@@ -1,10 +1,10 @@
 //! # Alexa SDK
-//! 
+//!
 //! `alexa_sdk` implements stucts corresponding to the [Alexa JSON specification](https://developer.amazon.com/docs/custom-skills/request-and-response-json-reference.html)
 //! along with helper functions for common uses of the  `Request` and `Response` objects.
-//! 
+//!
 //! ## Usage
-//! 
+//!
 //! Simplest possible Alexa "Hello, World" skill:
 //!
 //! ```rust
@@ -77,5 +77,5 @@
 pub mod request;
 pub mod response;
 
-pub use self::request::{Request};
-pub use self::response::{Response};
+pub use self::request::Request;
+pub use self::response::Response;

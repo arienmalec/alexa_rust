@@ -3,6 +3,8 @@ extern crate serde_derive;
 extern crate serde_json;
 
 use self::serde_derive::{Deserialize, Serialize};
+use serde_json::map::Map;
+use serde_json::value::Value as SerdeValue;
 use std::collections::HashMap;
 use std::convert::From;
 
@@ -44,6 +46,8 @@ pub struct User {
 pub struct Device {
     #[serde(rename = "deviceId")]
     pub device_id: String,
+    #[serde(rename = "supportedInterfaces")]
+    pub supported_interfaces: Option<Map<String, SerdeValue>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -66,12 +70,16 @@ pub struct Context {
     pub system: System,
     #[serde(rename = "AudioPlayer")]
     pub audio_player: Option<AudioPlayer>,
+    #[serde(rename = "Geolocation")]
+    pub geolocation: Option<Geolocation>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct System {
     #[serde(rename = "apiAccessToken")]
     pub api_access_token: Option<String>,
+    #[serde(rename = "apiEndpoint")]
+    pub api_endpoint: Option<String>,
     pub device: Option<Device>,
     pub application: Option<Application>,
 }
@@ -83,6 +91,57 @@ pub struct AudioPlayer {
     pub offset_in_milliseconds: Option<u64>,
     #[serde(rename = "playerActivity")]
     pub player_activity: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Geolocation {
+    #[serde(rename = "locationServices")]
+    pub location_services: Option<LocationServices>,
+    pub timestamp: String,
+    pub coordinate: Option<Coordinate>,
+    pub altitude: Option<Altitude>,
+    pub heading: Option<Heading>,
+    pub speed: Option<Speed>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct LocationServices {
+    pub access: String,
+    pub status: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+pub struct Coordinate {
+    #[serde(rename = "latitudeInDegrees")]
+    pub latitude_degrees: f32,
+    #[serde(rename = "longitudeInDegrees")]
+    pub longitude_degrees: f32,
+    #[serde(rename = "accuracyInMeters")]
+    pub accuracy_meters: f32,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+pub struct Altitude {
+    #[serde(rename = "altitudeInMeters")]
+    pub altitude_meters: Option<f32>,
+    #[serde(rename = "accuracyInMeters")]
+    pub accuracy_meters: Option<f32>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+pub struct Heading {
+    #[serde(rename = "directionInDegrees")]
+    pub direction_degrees: Option<f32>,
+    #[serde(rename = "accuracyInDegrees")]
+    pub accuracy_degrees: Option<f32>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+pub struct Speed {
+    #[serde(rename = "speedInMetersPerSecond")]
+    pub speed_mps: Option<f32>,
+    #[serde(rename = "accuracyInMetersPerSecond")]
+    pub accuracy_mps: Option<f32>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
