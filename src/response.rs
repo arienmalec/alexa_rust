@@ -189,7 +189,7 @@ impl fmt::Display for CardType {
             CardType::Simple => "Simple",
             CardType::Standard => "Standard",
             CardType::LinkAccount => "LinkAccount",
-            CardType::AskForPermission => "AskForPermissonConsent",
+            CardType::AskForPermission => "AskForPermissionsConsent",
         };
         write!(f, "{}", s)
     }
